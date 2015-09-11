@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
 
   spec.files         = Dir['Rakefile', 'README.md', 'LICENSE.txt', 'lib/**/*']
-  spec.executables   = Dir['bin/*']
+  spec.executables   = []
   spec.test_files    = Dir['spec/**/*']
   spec.require_paths = ["lib"]
 
