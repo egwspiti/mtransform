@@ -5,3 +5,10 @@ task :default => :spec
 RSpec::Core::RakeTask.new('spec') do |t|
 
 end
+
+desc "Start pry console with mtransform required."
+task :pry do
+  require 'mtransform'
+  require 'pry'
+  binding.pry
+end
