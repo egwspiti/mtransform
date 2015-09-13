@@ -1,5 +1,6 @@
 require 'mtransform/mtransform_dsl/as_is_command'
 require 'mtransform/mtransform_dsl/rename_command'
+require 'mtransform/mtransform_dsl/set_hash_command'
 
 module Mtransform
   class MtransformDSL
@@ -18,6 +19,13 @@ module Mtransform
 
     def rename(hash)
       order << RenameCommand.new(hash)
+    end
+
+    def set(arg)
+      case arg
+      when Hash
+        order << SetHashCommand.new(arg)
+      end
     end
 
     def transform

@@ -7,6 +7,7 @@ module Mtransform
       proc do
         as_is :b, :c
         rename :a => :x, :d => :y
+        set :z => 158
       end
     end
     let(:input) { { a: 1, b: 5, c: 'xxx' } }
@@ -25,26 +26,39 @@ module Mtransform
       it 'reads rename commands from the block' do
         expect(subject.order.select { |x| x.is_a? MtransformDSL::RenameCommand }.map(&:hash)).to eq [{a: :x, d: :y}]
       end
+
+      it 'reads set_hash commands from the block' do
+        expect(subject.order.select { |x| x.is_a? MtransformDSL::SetHashCommand }.map(&:hash)).to eq [{z: 158}]
+      end
     end
 
     context '#transform' do
       it 'transforms the input hash by running commands read from the block' do
-        expect(subject.transform).to eq ({ b: input[:b], c: input[:c], x: input[:a], y: input[:d] })
+        expect(subject.transform).to eq ({ b: input[:b], c: input[:c], x: input[:a], y: input[:d], z: 158 })
       end
 
       it 'commands are executed in the order they appear in the block' do
         o = MtransformDSL.new(input) do
+          set :c => 155
           rename :a => :c
           as_is :a, :c
         end
 
         f = MtransformDSL.new(input) do
+          set :c => 155
           as_is :a, :c
           rename :a => :c
         end
 
+        z = MtransformDSL.new(input) do
+          as_is :a, :c
+          rename :a => :c
+          set :c => 155
+        end
+
         expect(o.transform).to eq ({a: input[:a], c: input[:c]})
         expect(f.transform).to eq ({a: input[:a], c: input[:a]})
+        expect(z.transform).to eq ({a: input[:a], c: 155})
       end
     end
 
@@ -101,6 +115,33 @@ module Mtransform
         it 'output value at arg\'s value will be the value of input at arg\'s key' do
           subject.rename(rename_hash)
           expect(subject.transform).to eq ({e: input[:a], g: input[:b]})
+        end
+      end
+
+      context '#set with a hash argument' do
+        let(:set_hash) { {z: 15, w: 'yyy'} }
+
+        it 'raises on a hash arg that doesn\'t implement #keys' do
+          h = set_hash.dup
+          h.instance_eval { undef :keys }
+
+          expect { subject.set(h) }.to raise_error(ArgumentError)
+        end
+
+        it 'raises on hash arg that doesn\'t have all of its #keys to be Symbol' do
+          expect { subject.set(String => 'xxx') }.to raise_error(ArgumentError)
+        end
+
+        it 'raises on a hash arg that doesn\'t implement #each' do
+          h = set_hash.dup
+          h.instance_eval { undef :each }
+
+          expect { subject.set(h) }.to raise_error(ArgumentError)
+        end
+
+        it 'output values are copied from the hash arg' do
+          subject.set(set_hash)
+          expect(subject.transform).to eq set_hash
         end
       end
     end
