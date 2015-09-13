@@ -69,22 +69,33 @@ module Mtransform
       context '#rename' do
         let(:rename_hash) { {a: :e, b: :g } }
 
-        it 'raises on args that don\'t implement #keys' do
+        it 'raises on non-hash arg' do
+          expect { subject.rename(1) }.to raise_error(ArgumentError)
+        end
+
+        it 'raises on a hash arg that doesn\'t implement #keys' do
           h = rename_hash.dup
           h.instance_eval { undef :keys }
 
           expect { subject.rename(h) }.to raise_error(ArgumentError)
         end
 
-        it 'raises on args that don\'t implement #values' do
+        it 'raises on a hash arg that doesn\'t implement #values' do
           h = rename_hash.dup
           h.instance_eval { undef :values }
 
           expect { subject.rename(h) }.to raise_error(ArgumentError)
         end
 
-        it 'raises on args that don\'t have all #keys and #values to be Symbol' do
+        it 'raises on hash arg that doesn\'t have all #keys and #values to be Symbol' do
           expect { subject.rename(a: String) }.to raise_error(ArgumentError)
+        end
+
+        it 'raises on a hash arg that doesn\'t implement #each' do
+          h = rename_hash.dup
+          h.instance_eval { undef :each }
+
+          expect { subject.rename(h) }.to raise_error(ArgumentError)
         end
 
         it 'output value at arg\'s value will be the value of input at arg\'s key' do
