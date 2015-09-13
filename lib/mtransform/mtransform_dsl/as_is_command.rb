@@ -9,13 +9,13 @@ module Mtransform
         @keys = keys
       end
 
-    def run(input)
-      output = {}
-      keys.each do |key|
-        output[key] = input[key]
+      def run(input)
+        Hash.new.tap do |output|
+          keys.each do |key|
+            output[key] = input[key]
+          end
+        end
       end
-      output
-    end
     end
   end
 end

@@ -11,12 +11,11 @@ module Mtransform
       end
 
       def run(input)
-        output = {}
-
-        hash.each do |from, to|
-          output[to] = input[from]
+        Hash.new.tap do |output|
+          hash.each do |from, to|
+            output[to] = input[from]
+          end
         end
-        output
       end
     end
   end
