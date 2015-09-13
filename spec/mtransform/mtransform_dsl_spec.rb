@@ -19,11 +19,11 @@ module Mtransform
       end
 
       it 'reads as_is commands from the block' do
-        expect(subject.cmds[:as_is]).to eq [[:b, :c]]
+        expect(subject.order.select { |x| x.is_a? MtransformDSL::AsIsCommand }.map(&:keys)).to eq [[:b, :c]]
       end
 
       it 'reads rename commands from the block' do
-        expect(subject.cmds[:rename]).to eq [{a: :x, d: :y}]
+        expect(subject.order.select { |x| x.is_a? MtransformDSL::RenameCommand }.map(&:hash)).to eq [{a: :x, d: :y}]
       end
     end
 
@@ -57,7 +57,7 @@ module Mtransform
       context '#as_is' do
 
         it 'raises on non symbol args' do
-          expect { subject.as_is([:a, :b]) }.to raise_error(ArgumentError)
+          expect { subject.as_is(String, Object) }.to raise_error(ArgumentError)
         end
 
         it 'output values at specified keys will be the values of input at these keys' do
