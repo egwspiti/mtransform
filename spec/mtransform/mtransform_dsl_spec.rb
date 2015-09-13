@@ -83,13 +83,6 @@ module Mtransform
           expect { subject.rename(h) }.to raise_error(ArgumentError)
         end
 
-        it 'raises on args that don\'t implement #all?' do
-          h = rename_hash.dup
-          h.instance_eval { undef :all? }
-
-          expect { subject.rename(h) }.to raise_error(ArgumentError)
-        end
-
         it 'raises on args that don\'t have all #keys and #values to be Symbol' do
           expect { subject.rename(a: String) }.to raise_error(ArgumentError)
         end

@@ -4,7 +4,7 @@ module Mtransform
       attr_reader :hash
 
       def initialize(hash)
-        raise ArgumentError unless hash.respond_to?(:keys) && hash.respond_to?(:values) && hash.respond_to?(:all?)
+        raise ArgumentError unless hash.respond_to?(:keys) && hash.respond_to?(:values)
         raise ArgumentError unless (hash.keys + hash.values).all? { |key| key.is_a? Symbol }
         @hash = hash
       end
