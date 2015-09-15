@@ -16,7 +16,12 @@ module Mtransform
 
       def run
         map do |command|
-          command.run(input)
+          case command.method(:run).arity
+          when 0
+            command.run
+          when 1
+            command.run(input)
+          end
         end.inject(&:merge)
       end
     end

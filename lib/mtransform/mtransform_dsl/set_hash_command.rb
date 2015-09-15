@@ -10,7 +10,7 @@ module Mtransform
         @hash = hash
       end
 
-      def run(_)
+      def run
         Hash.new.tap do |output|
           hash.each do |key, value|
             output[key] = value
