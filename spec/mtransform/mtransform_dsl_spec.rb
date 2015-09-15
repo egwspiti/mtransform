@@ -159,6 +159,14 @@ module Mtransform
             expect(subject.transform).to eq ({f: 4, z: input[:a] + 4})
           end
 
+          it 'gets excecuted after every other command' do
+            subject.set(:z) do |input, output|
+              input[:a] + output[:f]
+            end
+            subject.rename(:b => :f)
+            expect(subject.transform).to eq ({f: input[:b], z: input[:a] + input[:b]})
+          end
+
           it 'raises when a block is not passed' do
             expect { subject.set(:z) }.to raise_error(ArgumentError)
           end
