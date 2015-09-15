@@ -1,3 +1,4 @@
+require 'mtransform/mtransform_dsl/commands'
 require 'mtransform/mtransform_dsl/as_is_command'
 require 'mtransform/mtransform_dsl/rename_command'
 require 'mtransform/mtransform_dsl/set_hash_command'
@@ -10,7 +11,7 @@ module Mtransform
     def initialize(hash, &block)
       @input  = hash
       @output = {}
-      @commands = []
+      @commands = Commands.new(input)
       instance_eval(&block)
     end
 
@@ -34,9 +35,7 @@ module Mtransform
     end
 
     def transform
-      commands.map do |command|
-        command.run(input)
-      end.inject(&:merge)
+      commands.run
     end
   end
 end
