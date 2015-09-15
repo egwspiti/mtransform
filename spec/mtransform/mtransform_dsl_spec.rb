@@ -3,7 +3,7 @@ require 'mtransform/mtransform_dsl'
 
 module Mtransform
   describe MtransformDSL do
-    let(:b) do
+    let(:block) do
       proc do
         as_is :b, :c
         rename :a => :x, :d => :y
@@ -11,11 +11,11 @@ module Mtransform
       end
     end
     let(:input) { { a: 1, b: 5, c: 'xxx' } }
-    subject { MtransformDSL.new(input, &b) }
+    subject { MtransformDSL.new(input, &block) }
 
     context '.new' do
       it 'takes a hash and a block' do
-        o = MtransformDSL.new(input, &b)
+        o = MtransformDSL.new(input, &block)
         expect(o.input).to eq input
       end
 
@@ -63,7 +63,7 @@ module Mtransform
     end
 
     context 'DSL block' do
-      let(:b) do
+      let(:block) do
         proc { }
       end
       let(:input) { { a: 1, b: 5, c: 7, d: -1 } }

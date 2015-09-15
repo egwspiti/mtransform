@@ -7,11 +7,11 @@ module Mtransform
   class MtransformDSL
     attr_reader :input, :output, :order
 
-    def initialize(hash, &b)
+    def initialize(hash, &block)
       @input  = hash
       @output = {}
       @order = []
-      instance_eval(&b)
+      instance_eval(&block)
     end
 
     def as_is(*keys)
