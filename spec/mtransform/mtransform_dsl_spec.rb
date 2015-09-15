@@ -117,30 +117,48 @@ module Mtransform
         end
       end
 
-      context '#set with a hash argument' do
-        let(:set_hash) { {z: 15, w: 'yyy'} }
+      context '#set' do
+        context 'with a hash argument' do
+          let(:set_hash) { {z: 15, w: 'yyy'} }
 
-        it 'output values are copied from the hash arg' do
-          subject.set(set_hash)
-          expect(subject.transform).to eq set_hash
+          it 'output values are copied from the hash arg' do
+            subject.set(set_hash)
+            expect(subject.transform).to eq set_hash
+          end
+
+          it 'raises on a hash arg that doesn\'t implement #keys' do
+            h = set_hash.dup
+            h.instance_eval { undef :keys }
+
+            expect { subject.set(h) }.to raise_error(ArgumentError)
+          end
+
+          it 'raises on a hash arg that doesn\'t implement #each' do
+            h = set_hash.dup
+            h.instance_eval { undef :each }
+
+            expect { subject.set(h) }.to raise_error(ArgumentError)
+          end
+
+          it 'raises on hash arg that doesn\'t have all of its #keys to be Symbol' do
+            expect { subject.set(String => 'xxx') }.to raise_error(ArgumentError)
+          end
         end
 
-        it 'raises on a hash arg that doesn\'t implement #keys' do
-          h = set_hash.dup
-          h.instance_eval { undef :keys }
-
-          expect { subject.set(h) }.to raise_error(ArgumentError)
+        context 'with a symbol argument' do
+          it 'output value at the key pointed by the symbol arg is the result of the evaluation of the block' do
+            subject.set(:z) { 1 + 1 }
+            expect(subject.transform).to eq ({z: 2})
+          end
+          it 'raises when a block is not passed' do
+            expect { subject.set(:z) }.to raise_error(ArgumentError)
+          end
         end
 
-        it 'raises on a hash arg that doesn\'t implement #each' do
-          h = set_hash.dup
-          h.instance_eval { undef :each }
-
-          expect { subject.set(h) }.to raise_error(ArgumentError)
-        end
-
-        it 'raises on hash arg that doesn\'t have all of its #keys to be Symbol' do
-          expect { subject.set(String => 'xxx') }.to raise_error(ArgumentError)
+        context 'without a symbol or a hash argument' do
+          it 'raises' do
+            expect { subject.set(1) }.to raise_error(ArgumentError)
+          end
         end
       end
     end
