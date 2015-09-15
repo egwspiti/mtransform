@@ -20,15 +20,15 @@ module Mtransform
       end
 
       it 'reads as_is commands from the block' do
-        expect(subject.order.select { |x| x.is_a? MtransformDSL::AsIsCommand }.map(&:keys)).to eq [[:b, :c]]
+        expect(subject.commands.select { |x| x.is_a? MtransformDSL::AsIsCommand }.map(&:keys)).to eq [[:b, :c]]
       end
 
       it 'reads rename commands from the block' do
-        expect(subject.order.select { |x| x.is_a? MtransformDSL::RenameCommand }.map(&:hash)).to eq [{a: :x, d: :y}]
+        expect(subject.commands.select { |x| x.is_a? MtransformDSL::RenameCommand }.map(&:hash)).to eq [{a: :x, d: :y}]
       end
 
       it 'reads set_hash commands from the block' do
-        expect(subject.order.select { |x| x.is_a? MtransformDSL::SetHashCommand }.map(&:hash)).to eq [{z: 158}]
+        expect(subject.commands.select { |x| x.is_a? MtransformDSL::SetHashCommand }.map(&:hash)).to eq [{z: 158}]
       end
     end
 

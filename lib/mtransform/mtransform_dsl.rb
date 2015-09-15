@@ -5,37 +5,37 @@ require 'mtransform/mtransform_dsl/set_proc_command'
 
 module Mtransform
   class MtransformDSL
-    attr_reader :input, :output, :order
+    attr_reader :input, :output, :commands
 
     def initialize(hash, &block)
       @input  = hash
       @output = {}
-      @order = []
+      @commands = []
       instance_eval(&block)
     end
 
     def as_is(*keys)
-      order << AsIsCommand.new(keys)
+      commands << AsIsCommand.new(keys)
     end
 
     def rename(hash)
-      order << RenameCommand.new(hash)
+      commands << RenameCommand.new(hash)
     end
 
     def set(arg, &block)
       case arg
       when Hash
-        order << SetHashCommand.new(arg)
+        commands << SetHashCommand.new(arg)
       when Symbol
-        order << SetProcCommand.new(arg, &block)
+        commands << SetProcCommand.new(arg, &block)
       else
         raise ArgumentError
       end
     end
 
     def transform
-      order.map do |cmd|
-        cmd.run(input)
+      commands.map do |command|
+        command.run(input)
       end.inject(&:merge)
     end
   end
