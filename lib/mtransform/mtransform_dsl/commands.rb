@@ -15,14 +15,17 @@ module Mtransform
       end
 
       def run
-        map do |command|
+        inject({}) do |output, command|
           case command.method(:run).arity
           when 0
-            command.run
+            output.merge!(command.run)
           when 1
-            command.run(input)
+            output.merge!(command.run(input))
+          when 2
+            output.merge!(command.run(input, output))
           end
-        end.inject(&:merge)
+          output
+        end
       end
     end
   end

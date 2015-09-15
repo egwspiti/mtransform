@@ -9,10 +9,10 @@ module Mtransform
         @data = { key => block }
       end
 
-      def run
-        Hash.new.tap do |output|
+      def run(input, output)
+        Hash.new.tap do |result|
           data.each do |key, block|
-            output[key] = instance_exec(&block)
+            result[key] = block.call(input, output)
           end
         end
       end

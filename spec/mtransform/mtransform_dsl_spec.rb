@@ -150,6 +150,15 @@ module Mtransform
             subject.set(:z) { 1 + 1 }
             expect(subject.transform).to eq ({z: 2})
           end
+
+          it 'input and output hashes are made available to the block as parameters' do
+            subject.set(:f) { 4 }
+            subject.set(:z) do |input, output|
+              input[:a] + output[:f]
+            end
+            expect(subject.transform).to eq ({f: 4, z: input[:a] + 4})
+          end
+
           it 'raises when a block is not passed' do
             expect { subject.set(:z) }.to raise_error(ArgumentError)
           end
