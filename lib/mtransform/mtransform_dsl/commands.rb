@@ -25,20 +25,24 @@ module Mtransform
 
       def run
         after = []
-        output = inject({}) do |output, command|
-          case command.method(:run).arity
-          when 0
-            output.merge!(command.run)
-          when 1
-            output.merge!(command.run(input))
-          when 2
-            after << command
-          end
-          output
+
+        output = inject({}) do |acc, command|
+          command_output =  case command.method(:run).arity
+                            when 0
+                              command.run
+                            when 1
+                              command.run(input)
+                            when 2
+                              after << command
+                              {}
+                            end
+          acc.merge(command_output)
         end
+
         after.each do |command|
           output.merge!(command.run(input, output))
         end
+
         output.merge!(keep_rest(input.keys - output.keys)) if keep_rest?
         output
       end
