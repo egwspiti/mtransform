@@ -11,9 +11,9 @@ module Mtransform
       end
 
       def run
-        Hash.new.tap do |output|
+        Hash.new.tap do |result|
           hash.each do |key, value|
-            output[key] = value
+            result[key] = value
           end
         end
       end

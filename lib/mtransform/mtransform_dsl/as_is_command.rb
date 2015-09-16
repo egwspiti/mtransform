@@ -10,9 +10,9 @@ module Mtransform
       end
 
       def run(input)
-        Hash.new.tap do |output|
+        Hash.new.tap do |result|
           keys.each do |key|
-            output[key] = input[key]
+            result[key] = input[key]
           end
         end
       end
