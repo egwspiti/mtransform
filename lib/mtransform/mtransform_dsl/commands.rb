@@ -14,6 +14,15 @@ module Mtransform
         @commands = []
       end
 
+      def rest=(action)
+        raise ArgumentError unless action == :keep || action == :delete
+        @rest_action = action
+      end
+
+      def keep_rest?
+        @rest_action == :keep
+      end
+
       def run
         after = []
         output = inject({}) do |output, command|
@@ -30,7 +39,18 @@ module Mtransform
         after.each do |command|
           output.merge!(command.run(input, output))
         end
+        output.merge!(keep_rest(input.keys - output.keys)) if keep_rest?
         output
+      end
+
+      private
+
+      def keep_rest(rest_keys)
+        Hash.new.tap do |result|
+          rest_keys.each do |key|
+            result[key] = input[key]
+          end
+        end
       end
     end
   end

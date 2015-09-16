@@ -23,6 +23,10 @@ module Mtransform
       commands << RenameCommand.new(hash)
     end
 
+    def rest(action)
+      commands.rest = action
+    end
+
     def set(arg, &block)
       case arg
       when Hash

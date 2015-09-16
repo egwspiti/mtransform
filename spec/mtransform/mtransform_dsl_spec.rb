@@ -178,6 +178,51 @@ module Mtransform
           end
         end
       end
+
+      context '#rest' do
+        context ':keep' do
+          it 'copies keys, values from keys that exist in input but not in output' do
+            subject.set(:w) { 2 }
+            subject.rest(:keep)
+            expect(subject.transform).to eq (input.merge(w: 2))
+          end
+
+          it 'gets executed after every other command has executed' do
+            subject.rest(:keep)
+            subject.set(:w) { 2 }
+            subject.set(ww: 4)
+            expect(subject.transform).to eq (input.merge(w: 2, ww: 4))
+          end
+        end
+
+        context ':delete' do
+          it 'does nothing since the keys to be deleted are not present in output' do
+            subject.rest(:delete)
+            subject.set(:w) { 2 }
+            subject.set(ww: 4)
+            expect(subject.transform).to eq ({ w: 2, ww: 4 })
+          end
+
+          it 'is the default behaviour of #rest' do
+            a = MtransformDSL.new(input) do
+              as_is :a, :c
+              set :f => 15
+              rest :delete
+            end
+
+            b = MtransformDSL.new(input) do
+              as_is :a, :c
+              set :f => 15
+            end
+
+            expect(a.transform).to eq (b.transform)
+          end
+        end
+
+        it 'raises when arg is neither :keep or :delete' do
+          expect { subject.rest(:xxx) }.to raise_error(ArgumentError)
+        end
+      end
     end
   end
 end
