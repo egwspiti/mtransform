@@ -19,6 +19,12 @@ module Mtransform
         expect(o.input).to eq input
       end
 
+      it 'takes an optional context argument' do
+        context = Object.new
+        o = MtransformDSL.new(input, context, &block)
+        expect(o.context).to eq context
+      end
+
       it 'reads as_is commands from the block' do
         expect(subject.commands.select { |x| x.is_a? MtransformDSL::AsIsCommand }.map(&:keys)).to eq [[:b, :c]]
       end
@@ -149,6 +155,23 @@ module Mtransform
           it 'output value at the key pointed by the symbol arg is the result of the evaluation of the block' do
             subject.set(:z) { 1 + 1 }
             expect(subject.transform).to eq ({z: 2})
+          end
+
+          it 'the block is evaluated on the context (if any) passed to .new' do
+            class TransformWithHelper
+              def reverse(str)
+                str.reverse
+              end
+              def transform(input)
+                MtransformDSL.new(input, self) do
+                  set :x do |input, _|
+                    reverse(input[:a])
+                  end
+                end.transform
+              end
+            end
+            x = TransformWithHelper.new
+            expect(x.transform(a: 'test_abc')).to eq ({x: 'cba_tset'})
           end
 
           it 'input and output hashes are made available to the block as parameters' do

@@ -14,14 +14,14 @@ describe Mtransform do
     let(:hash) { {a: 1, b: 5} }
 
     it 'creates a new MtransformDSL object' do
-      expect(Mtransform::MtransformDSL).to receive(:new).with(hash).and_call_original
+      expect(Mtransform::MtransformDSL).to receive(:new).with(hash, obj).and_call_original
       obj.transform(hash) do
 
       end
     end
 
     it 'invokes #transform on the created MtransformDSL object' do
-      expect(Mtransform::MtransformDSL).to receive(:new).with(hash).and_return(object = Object.new)
+      expect(Mtransform::MtransformDSL).to receive(:new).with(hash, obj).and_return(object = Object.new)
       expect(object).to receive(:transform)
       obj.transform(hash) do
 
@@ -32,6 +32,14 @@ describe Mtransform do
       h = hash.dup
       h.instance_eval { undef :[] }
       expect { obj.transform(h) }.to raise_error(ArgumentError)
+    end
+
+    it 'accepts an optional context argument' do
+      x = Object.new
+      expect(Mtransform::MtransformDSL).to receive(:new).with(hash, x).and_call_original
+      obj.transform(hash, x) do
+
+      end
     end
   end
 end

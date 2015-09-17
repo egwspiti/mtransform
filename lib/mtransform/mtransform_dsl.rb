@@ -6,12 +6,13 @@ require 'mtransform/mtransform_dsl/set_proc_command'
 
 module Mtransform
   class MtransformDSL
-    attr_reader :input, :output, :commands
+    attr_reader :input, :output, :commands, :context
 
-    def initialize(hash, &block)
+    def initialize(hash, context = nil, &block)
       @input  = hash
       @output = {}
       @commands = Commands.new(input)
+      @context = context
       instance_eval(&block)
     end
 
@@ -32,7 +33,7 @@ module Mtransform
       when Hash
         commands << SetHashCommand.new(arg)
       when Symbol
-        commands << SetProcCommand.new(arg, &block)
+        commands << SetProcCommand.new(arg, context, &block)
       else
         raise ArgumentError
       end
