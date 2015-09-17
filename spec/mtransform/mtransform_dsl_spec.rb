@@ -182,6 +182,20 @@ module Mtransform
             expect(subject.transform).to eq ({f: 4, z: input[:a] + 4})
           end
 
+          it 'input hash is immutable inside the block' do
+            subject.set(:z) do |input, output|
+              input[:a] = 15
+            end
+            expect { subject.transform }.to raise_error(RuntimeError)
+          end
+
+          it 'output hash is immutable inside the block' do
+            subject.set(:z) do |input, output|
+              output[:a] = 15
+            end
+            expect { subject.transform }.to raise_error(RuntimeError)
+          end
+
           it 'gets excecuted after every other command' do
             subject.set(:z) do |input, output|
               input[:a] + output[:f]
