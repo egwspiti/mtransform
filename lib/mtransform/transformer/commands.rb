@@ -18,6 +18,10 @@ module Mtransform
         commands << command
       end
 
+      def add_command_with_block(command)
+        commands_with_block << command
+      end
+
       def rest=(action)
         raise ArgumentError, 'Not a valid action. Only :keep and :delete are supported' unless action == :keep || action == :delete
         @rest_action = action
