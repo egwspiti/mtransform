@@ -4,9 +4,6 @@ module Mtransform
   class Transformer
     class Commands
       extend Forwardable
-      include Enumerable
-
-      def_delegators :commands, :each
       attr_reader :commands, :commands_with_block
 
       def initialize
@@ -34,7 +31,7 @@ module Mtransform
       def run(input)
         raise ArgumentError, 'Input arg does not implement #[]' unless input.respond_to?(:[])
 
-        output = inject({}) do |acc, command|
+        output = commands.inject({}) do |acc, command|
           command_output =  case command.method(:run).arity
                             when 0
                               command.run
