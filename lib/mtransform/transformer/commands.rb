@@ -7,10 +7,11 @@ module Mtransform
       include Enumerable
 
       def_delegators :commands, :each, :<<
-      attr_reader :commands
+      attr_reader :commands, :commands_with_block
 
       def initialize
         @commands = []
+        @commands_with_block = []
       end
 
       def rest=(action)
@@ -24,7 +25,6 @@ module Mtransform
 
       def run(input)
         raise ArgumentError, 'Input arg does not implement #[]' unless input.respond_to?(:[])
-        after = []
 
         output = inject({}) do |acc, command|
           command_output =  case command.method(:run).arity
@@ -32,14 +32,11 @@ module Mtransform
                               command.run
                             when 1
                               command.run(input)
-                            when 2
-                              after << command
-                              {}
                             end
           acc.merge(command_output)
         end
 
-        after.each do |command|
+        commands_with_block.each do |command|
           output.merge!(command.run(input, output))
         end
 

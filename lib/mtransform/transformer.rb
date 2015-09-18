@@ -31,7 +31,7 @@ module Mtransform
       when Hash
         commands << SetHashCommand.new(arg)
       when Symbol
-        commands << SetProcCommand.new(arg, context, &block)
+        commands.commands_with_block << SetProcCommand.new(arg, context, &block)
       else
         raise ArgumentError, 'No Hash or Symbol argument given'
       end
