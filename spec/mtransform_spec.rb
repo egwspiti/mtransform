@@ -46,5 +46,11 @@ describe Mtransform do
       end
     end
   end
+
+  describe 'Mtransform::transform' do
+    it 'can be used without including Mtransform' do
+      expect { Mtransform::transform(hash) { } }.not_to raise_error
+    end
+  end
 end
 
