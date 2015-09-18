@@ -7,10 +7,9 @@ module Mtransform
       include Enumerable
 
       def_delegators :commands, :each, :<<
-      attr_reader :commands, :input
+      attr_reader :commands
 
-      def initialize(input)
-        @input = input
+      def initialize
         @commands = []
       end
 
@@ -23,7 +22,7 @@ module Mtransform
         @rest_action == :keep
       end
 
-      def run
+      def run(input)
         after = []
 
         output = inject({}) do |acc, command|
@@ -43,13 +42,13 @@ module Mtransform
           output.merge!(command.run(input, output))
         end
 
-        output.merge!(keep_rest(input.keys - output.keys)) if keep_rest?
+        output.merge!(keep_rest(input, input.keys - output.keys)) if keep_rest?
         output
       end
 
       private
 
-      def keep_rest(rest_keys)
+      def keep_rest(input, rest_keys)
         Hash.new.tap do |result|
           rest_keys.each do |key|
             result[key] = input[key]

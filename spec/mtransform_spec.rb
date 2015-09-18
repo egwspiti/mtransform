@@ -14,14 +14,14 @@ describe Mtransform do
     let(:hash) { {a: 1, b: 5} }
 
     it 'creates a new Transformer object' do
-      expect(Mtransform::Transformer).to receive(:new).with(hash, obj).and_call_original
+      expect(Mtransform::Transformer).to receive(:new).with(obj).and_call_original
       obj.transform(hash) do
 
       end
     end
 
     it 'invokes #transform on the created Transformer object' do
-      expect(Mtransform::Transformer).to receive(:new).with(hash, obj).and_return(object = Object.new)
+      expect(Mtransform::Transformer).to receive(:new).with(obj).and_return(object = Object.new)
       expect(object).to receive(:transform)
       obj.transform(hash) do
 
@@ -36,7 +36,7 @@ describe Mtransform do
 
     it 'accepts an optional context argument' do
       x = Object.new
-      expect(Mtransform::Transformer).to receive(:new).with(hash, x).and_call_original
+      expect(Mtransform::Transformer).to receive(:new).with(x).and_call_original
       obj.transform(hash, x) do
 
       end

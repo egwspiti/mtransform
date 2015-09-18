@@ -11,17 +11,16 @@ module Mtransform
       end
     end
     let(:input) { { a: 1, b: 5, c: 'xxx' } }
-    subject { Transformer.new(input, &block) }
+    subject { Transformer.new(&block) }
 
     context '.new' do
-      it 'takes a hash and a block' do
-        o = Transformer.new(input, &block)
-        expect(o.input).to eq input
+      it 'takes a block' do
+        expect { Transformer.new(&block) }.not_to raise_error
       end
 
       it 'takes an optional context argument' do
         context = Object.new
-        o = Transformer.new(input, context, &block)
+        o = Transformer.new(context, &block)
         expect(o.context).to eq context
       end
 
@@ -40,31 +39,31 @@ module Mtransform
 
     context '#transform' do
       it 'transforms the input hash by running commands read from the block' do
-        expect(subject.transform).to eq ({ b: input[:b], c: input[:c], x: input[:a], y: input[:d], z: 158 })
+        expect(subject.transform(input)).to eq ({ b: input[:b], c: input[:c], x: input[:a], y: input[:d], z: 158 })
       end
 
       it 'commands are executed in the order they appear in the block' do
-        o = Transformer.new(input) do
+        o = Transformer.new do
           set :c => 155
           rename :a => :c
           as_is :a, :c
         end
 
-        f = Transformer.new(input) do
+        f = Transformer.new do
           set :c => 155
           as_is :a, :c
           rename :a => :c
         end
 
-        z = Transformer.new(input) do
+        z = Transformer.new do
           as_is :a, :c
           rename :a => :c
           set :c => 155
         end
 
-        expect(o.transform).to eq ({a: input[:a], c: input[:c]})
-        expect(f.transform).to eq ({a: input[:a], c: input[:a]})
-        expect(z.transform).to eq ({a: input[:a], c: 155})
+        expect(o.transform(input)).to eq ({a: input[:a], c: input[:c]})
+        expect(f.transform(input)).to eq ({a: input[:a], c: input[:a]})
+        expect(z.transform(input)).to eq ({a: input[:a], c: 155})
       end
     end
 
@@ -77,7 +76,7 @@ module Mtransform
       context '#as_is' do
         it 'output values at specified keys will be the values of input at these keys' do
           subject.as_is(:a, :b)
-          expect(subject.transform).to eq ({a: input[:a], b: input[:b]})
+          expect(subject.transform(input)).to eq ({a: input[:a], b: input[:b]})
         end
 
         it 'raises on non symbol args' do
@@ -90,7 +89,7 @@ module Mtransform
 
         it 'output value at arg\'s value will be the value of input at arg\'s key' do
           subject.rename(rename_hash)
-          expect(subject.transform).to eq ({e: input[:a], g: input[:b]})
+          expect(subject.transform(input)).to eq ({e: input[:a], g: input[:b]})
         end
 
         it 'raises on non-hash arg' do
@@ -129,7 +128,7 @@ module Mtransform
 
           it 'output values are copied from the hash arg' do
             subject.set(set_hash)
-            expect(subject.transform).to eq set_hash
+            expect(subject.transform(input)).to eq set_hash
           end
 
           it 'raises on a hash arg that doesn\'t implement #keys' do
@@ -154,7 +153,7 @@ module Mtransform
         context 'with a symbol argument' do
           it 'output value at the key pointed by the symbol arg is the result of the evaluation of the block' do
             subject.set(:z) { 1 + 1 }
-            expect(subject.transform).to eq ({z: 2})
+            expect(subject.transform(input)).to eq ({z: 2})
           end
 
           it 'the block is evaluated on the context (if any) passed to .new' do
@@ -163,11 +162,11 @@ module Mtransform
                 str.reverse
               end
               def transform(input)
-                Transformer.new(input, self) do
+                Transformer.new(self) do
                   set :x do |input, _|
                     reverse(input[:a])
                   end
-                end.transform
+                end.transform(input)
               end
             end
             x = TransformWithHelper.new
@@ -179,21 +178,21 @@ module Mtransform
             subject.set(:z) do |input, output|
               input[:a] + output[:f]
             end
-            expect(subject.transform).to eq ({f: 4, z: input[:a] + 4})
+            expect(subject.transform(input)).to eq ({f: 4, z: input[:a] + 4})
           end
 
           it 'input hash is immutable inside the block' do
             subject.set(:z) do |input, output|
               input[:a] = 15
             end
-            expect { subject.transform }.to raise_error(RuntimeError)
+            expect { subject.transform(input) }.to raise_error(RuntimeError)
           end
 
           it 'output hash is immutable inside the block' do
             subject.set(:z) do |input, output|
               output[:a] = 15
             end
-            expect { subject.transform }.to raise_error(RuntimeError)
+            expect { subject.transform(input) }.to raise_error(RuntimeError)
           end
 
           it 'gets excecuted after every other command' do
@@ -201,7 +200,7 @@ module Mtransform
               input[:a] + output[:f]
             end
             subject.rename(:b => :f)
-            expect(subject.transform).to eq ({f: input[:b], z: input[:a] + input[:b]})
+            expect(subject.transform(input)).to eq ({f: input[:b], z: input[:a] + input[:b]})
           end
 
           it 'raises when a block is not passed' do
@@ -221,14 +220,14 @@ module Mtransform
           it 'copies keys, values from keys that exist in input but not in output' do
             subject.set(:w) { 2 }
             subject.rest(:keep)
-            expect(subject.transform).to eq (input.merge(w: 2))
+            expect(subject.transform(input)).to eq (input.merge(w: 2))
           end
 
           it 'gets executed after every other command has executed' do
             subject.rest(:keep)
             subject.set(:w) { 2 }
             subject.set(ww: 4)
-            expect(subject.transform).to eq (input.merge(w: 2, ww: 4))
+            expect(subject.transform(input)).to eq (input.merge(w: 2, ww: 4))
           end
         end
 
@@ -237,22 +236,22 @@ module Mtransform
             subject.rest(:delete)
             subject.set(:w) { 2 }
             subject.set(ww: 4)
-            expect(subject.transform).to eq ({ w: 2, ww: 4 })
+            expect(subject.transform(input)).to eq ({ w: 2, ww: 4 })
           end
 
           it 'is the default behaviour of #rest' do
-            a = Transformer.new(input) do
+            a = Transformer.new do
               as_is :a, :c
               set :f => 15
               rest :delete
             end
 
-            b = Transformer.new(input) do
+            b = Transformer.new do
               as_is :a, :c
               set :f => 15
             end
 
-            expect(a.transform).to eq (b.transform)
+            expect(a.transform(input)).to eq (b.transform(input))
           end
         end
 

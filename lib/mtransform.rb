@@ -4,6 +4,6 @@ require "mtransform/transformer"
 module Mtransform
   def transform(hash, context = self, &block)
     raise ArgumentError unless hash.respond_to?(:[])
-    Transformer.new(hash, context, &block).transform
+    Transformer.new(context, &block).transform(hash)
   end
 end
