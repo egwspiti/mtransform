@@ -13,6 +13,10 @@ describe Mtransform do
     let(:obj) { klass.new }
     let(:hash) { {a: 1, b: 5} }
 
+    it 'takes an input hash arg and a block' do
+      expect { obj.transform(hash) { } }.not_to raise_error
+    end
+
     it 'creates a new Transformer object' do
       expect(Mtransform::Transformer).to receive(:new).with(obj).and_call_original
       obj.transform(hash) do
