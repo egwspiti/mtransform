@@ -23,6 +23,7 @@ module Mtransform
       end
 
       def run(input)
+        raise ArgumentError unless input.respond_to?(:[])
         after = []
 
         output = inject({}) do |acc, command|
