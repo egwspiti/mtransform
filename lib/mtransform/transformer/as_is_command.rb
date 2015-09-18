@@ -5,7 +5,7 @@ module Mtransform
 
       def initialize(*keys)
         keys.flatten!
-        raise ArgumentError unless keys.all? { |key| key.is_a? Symbol }
+        raise ArgumentError, 'Not all arguments are Symbol' unless keys.all? { |key| key.is_a? Symbol }
         @keys = keys
       end
 

@@ -4,8 +4,8 @@ module Mtransform
       attr_reader :data, :context
 
       def initialize(key, context, &block)
-        raise ArgumentError unless block_given?
-        raise ArgumentError unless key.is_a? Symbol
+        raise ArgumentError, 'No block given' unless block_given?
+        raise ArgumentError, 'Key argument is not a Symbol' unless key.is_a? Symbol
         @data = { key => block }
         @context = context || self
       end

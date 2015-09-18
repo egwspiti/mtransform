@@ -33,7 +33,7 @@ module Mtransform
       when Symbol
         commands << SetProcCommand.new(arg, context, &block)
       else
-        raise ArgumentError
+        raise ArgumentError, 'No Hash or Symbol argument given'
       end
     end
 

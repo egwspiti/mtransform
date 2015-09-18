@@ -35,7 +35,7 @@ describe Mtransform do
     it 'raises ArgumentError on argument that doesn\'t implement #[]' do
       h = hash.dup
       h.instance_eval { undef :[] }
-      expect { obj.transform(h) }.to raise_error(ArgumentError)
+      expect { obj.transform(h) { } }.to raise_error(ArgumentError, /does not implement #\[\]/)
     end
 
     it 'accepts an optional context argument' do

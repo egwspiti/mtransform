@@ -14,7 +14,7 @@ module Mtransform
       end
 
       def rest=(action)
-        raise ArgumentError unless action == :keep || action == :delete
+        raise ArgumentError, 'Not a valid action. Only :keep and :delete are supported' unless action == :keep || action == :delete
         @rest_action = action
       end
 
@@ -23,7 +23,7 @@ module Mtransform
       end
 
       def run(input)
-        raise ArgumentError unless input.respond_to?(:[])
+        raise ArgumentError, 'Input arg does not implement #[]' unless input.respond_to?(:[])
         after = []
 
         output = inject({}) do |acc, command|
