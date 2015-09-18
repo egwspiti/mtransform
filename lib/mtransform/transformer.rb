@@ -15,11 +15,11 @@ module Mtransform
     end
 
     def as_is(*keys)
-      commands.add(AsIsCommand.new(keys))
+      commands.add_command_without_block(AsIsCommand.new(keys))
     end
 
     def rename(hash)
-      commands.add(RenameCommand.new(hash))
+      commands.add_command_without_block(RenameCommand.new(hash))
     end
 
     def rest(action)
@@ -29,7 +29,7 @@ module Mtransform
     def set(arg, &block)
       case arg
       when Hash
-        commands.add(SetHashCommand.new(arg))
+        commands.add_command_without_block(SetHashCommand.new(arg))
       when Symbol
         commands.add_command_with_block(SetProcCommand.new(arg, context, &block))
       else

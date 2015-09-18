@@ -25,15 +25,15 @@ module Mtransform
       end
 
       it 'reads as_is commands from the block' do
-        expect(subject.commands.commands.select { |x| x.is_a? Transformer::AsIsCommand }.map(&:keys)).to eq [[:b, :c]]
+        expect(subject.commands.commands_without_block.select { |x| x.is_a? Transformer::AsIsCommand }.map(&:keys)).to eq [[:b, :c]]
       end
 
       it 'reads rename commands from the block' do
-        expect(subject.commands.commands.select { |x| x.is_a? Transformer::RenameCommand }.map(&:hash)).to eq [{a: :x, d: :y}]
+        expect(subject.commands.commands_without_block.select { |x| x.is_a? Transformer::RenameCommand }.map(&:hash)).to eq [{a: :x, d: :y}]
       end
 
       it 'reads set_hash commands from the block' do
-        expect(subject.commands.commands.select { |x| x.is_a? Transformer::SetHashCommand }.map(&:hash)).to eq [{z: 158}]
+        expect(subject.commands.commands_without_block.select { |x| x.is_a? Transformer::SetHashCommand }.map(&:hash)).to eq [{z: 158}]
       end
     end
 

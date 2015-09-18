@@ -4,15 +4,15 @@ module Mtransform
   class Transformer
     class Commands
       extend Forwardable
-      attr_reader :commands, :commands_with_block
+      attr_reader :commands_without_block, :commands_with_block
 
       def initialize
-        @commands = []
+        @commands_without_block = []
         @commands_with_block = []
       end
 
-      def add(command)
-        commands << command
+      def add_command_without_block(command)
+        commands_without_block << command
       end
 
       def add_command_with_block(command)
@@ -31,7 +31,7 @@ module Mtransform
       def run(input)
         raise ArgumentError, 'Input arg does not implement #[]' unless input.respond_to?(:[])
 
-        output = commands.inject({}) do |acc, command|
+        output = commands_without_block.inject({}) do |acc, command|
           command_output =  case command.method(:run).arity
                             when 0
                               command.run
