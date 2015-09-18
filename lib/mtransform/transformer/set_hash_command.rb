@@ -1,5 +1,5 @@
 module Mtransform
-  class MtransformDSL
+  class Transformer
     class SetHashCommand
       attr_reader :hash
 

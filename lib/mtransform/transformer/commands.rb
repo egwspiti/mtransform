@@ -1,7 +1,7 @@
 require 'forwardable'
 
 module Mtransform
-  class MtransformDSL
+  class Transformer
     class Commands
       extend Forwardable
       include Enumerable

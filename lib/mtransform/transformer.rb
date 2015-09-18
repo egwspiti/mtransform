@@ -1,11 +1,11 @@
-require 'mtransform/mtransform_dsl/commands'
-require 'mtransform/mtransform_dsl/as_is_command'
-require 'mtransform/mtransform_dsl/rename_command'
-require 'mtransform/mtransform_dsl/set_hash_command'
-require 'mtransform/mtransform_dsl/set_proc_command'
+require 'mtransform/transformer/commands'
+require 'mtransform/transformer/as_is_command'
+require 'mtransform/transformer/rename_command'
+require 'mtransform/transformer/set_hash_command'
+require 'mtransform/transformer/set_proc_command'
 
 module Mtransform
-  class MtransformDSL
+  class Transformer
     attr_reader :input, :output, :commands, :context
 
     def initialize(hash, context = nil, &block)

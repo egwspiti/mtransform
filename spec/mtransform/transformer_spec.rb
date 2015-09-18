@@ -1,8 +1,8 @@
 require 'spec_helper'
-require 'mtransform/mtransform_dsl'
+require 'mtransform/transformer'
 
 module Mtransform
-  describe MtransformDSL do
+  describe Transformer do
     let(:block) do
       proc do
         as_is :b, :c
@@ -11,30 +11,30 @@ module Mtransform
       end
     end
     let(:input) { { a: 1, b: 5, c: 'xxx' } }
-    subject { MtransformDSL.new(input, &block) }
+    subject { Transformer.new(input, &block) }
 
     context '.new' do
       it 'takes a hash and a block' do
-        o = MtransformDSL.new(input, &block)
+        o = Transformer.new(input, &block)
         expect(o.input).to eq input
       end
 
       it 'takes an optional context argument' do
         context = Object.new
-        o = MtransformDSL.new(input, context, &block)
+        o = Transformer.new(input, context, &block)
         expect(o.context).to eq context
       end
 
       it 'reads as_is commands from the block' do
-        expect(subject.commands.select { |x| x.is_a? MtransformDSL::AsIsCommand }.map(&:keys)).to eq [[:b, :c]]
+        expect(subject.commands.select { |x| x.is_a? Transformer::AsIsCommand }.map(&:keys)).to eq [[:b, :c]]
       end
 
       it 'reads rename commands from the block' do
-        expect(subject.commands.select { |x| x.is_a? MtransformDSL::RenameCommand }.map(&:hash)).to eq [{a: :x, d: :y}]
+        expect(subject.commands.select { |x| x.is_a? Transformer::RenameCommand }.map(&:hash)).to eq [{a: :x, d: :y}]
       end
 
       it 'reads set_hash commands from the block' do
-        expect(subject.commands.select { |x| x.is_a? MtransformDSL::SetHashCommand }.map(&:hash)).to eq [{z: 158}]
+        expect(subject.commands.select { |x| x.is_a? Transformer::SetHashCommand }.map(&:hash)).to eq [{z: 158}]
       end
     end
 
@@ -44,19 +44,19 @@ module Mtransform
       end
 
       it 'commands are executed in the order they appear in the block' do
-        o = MtransformDSL.new(input) do
+        o = Transformer.new(input) do
           set :c => 155
           rename :a => :c
           as_is :a, :c
         end
 
-        f = MtransformDSL.new(input) do
+        f = Transformer.new(input) do
           set :c => 155
           as_is :a, :c
           rename :a => :c
         end
 
-        z = MtransformDSL.new(input) do
+        z = Transformer.new(input) do
           as_is :a, :c
           rename :a => :c
           set :c => 155
@@ -163,7 +163,7 @@ module Mtransform
                 str.reverse
               end
               def transform(input)
-                MtransformDSL.new(input, self) do
+                Transformer.new(input, self) do
                   set :x do |input, _|
                     reverse(input[:a])
                   end
@@ -241,13 +241,13 @@ module Mtransform
           end
 
           it 'is the default behaviour of #rest' do
-            a = MtransformDSL.new(input) do
+            a = Transformer.new(input) do
               as_is :a, :c
               set :f => 15
               rest :delete
             end
 
-            b = MtransformDSL.new(input) do
+            b = Transformer.new(input) do
               as_is :a, :c
               set :f => 15
             end

@@ -1,5 +1,5 @@
 module Mtransform
-  class MtransformDSL
+  class Transformer
     class AsIsCommand
       attr_reader :keys
 

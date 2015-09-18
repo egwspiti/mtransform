@@ -1,5 +1,5 @@
 module Mtransform
-  class MtransformDSL
+  class Transformer
     class SetProcCommand
       attr_reader :data, :context
 

@@ -1,5 +1,5 @@
 module Mtransform
-  class MtransformDSL
+  class Transformer
     class RenameCommand
       attr_reader :hash
 
