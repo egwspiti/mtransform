@@ -6,12 +6,16 @@ module Mtransform
       extend Forwardable
       include Enumerable
 
-      def_delegators :commands, :each, :<<
+      def_delegators :commands, :each
       attr_reader :commands, :commands_with_block
 
       def initialize
         @commands = []
         @commands_with_block = []
+      end
+
+      def add(command)
+        commands << command
       end
 
       def rest=(action)
