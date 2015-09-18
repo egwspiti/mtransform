@@ -21,10 +21,6 @@ module Mtransform
         @rest_action = action
       end
 
-      def keep_rest?
-        @rest_action == :keep
-      end
-
       def run(input)
         raise ArgumentError, 'Input arg does not implement #[]' unless input.respond_to?(:[])
 
@@ -47,6 +43,10 @@ module Mtransform
       end
 
       private
+
+      def keep_rest?
+        @rest_action == :keep
+      end
 
       def keep_rest(input, rest_keys)
         Hash.new.tap do |result|
