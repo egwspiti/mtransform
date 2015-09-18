@@ -1,9 +1,6 @@
-require 'forwardable'
-
 module Mtransform
   class Transformer
     class Commands
-      extend Forwardable
       attr_reader :commands_without_block, :commands_with_block
 
       def initialize
