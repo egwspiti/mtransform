@@ -6,11 +6,10 @@ require 'mtransform/transformer/set_proc_command'
 
 module Mtransform
   class Transformer
-    attr_reader :input, :output, :commands, :context
+    attr_reader :input, :commands, :context
 
     def initialize(hash, context = nil, &block)
       @input  = hash
-      @output = {}
       @commands = Commands.new(input)
       @context = context
       instance_eval(&block)
