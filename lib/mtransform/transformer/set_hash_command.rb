@@ -8,7 +8,7 @@ module Mtransform
       end
 
       def run(_input)
-        Hash.new.tap do |result|
+        {}.tap do |result|
           hash.each do |key, value|
             result[key] = value
           end

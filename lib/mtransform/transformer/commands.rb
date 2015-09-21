@@ -44,7 +44,7 @@ module Mtransform
       end
 
       def keep_rest(input, rest_keys)
-        Hash.new.tap do |result|
+        {}.tap do |result|
           rest_keys.each do |key|
             result[key] = input[key]
           end

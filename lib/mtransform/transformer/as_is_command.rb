@@ -9,7 +9,7 @@ module Mtransform
       end
 
       def run(input)
-        Hash.new.tap do |result|
+        {}.tap do |result|
           keys.each do |key|
             result[key] = input[key]
           end

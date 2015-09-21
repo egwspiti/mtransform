@@ -12,7 +12,7 @@ module Mtransform
       def run(input, output)
         input  = input.dup.freeze
         output = output.dup.freeze
-        Hash.new.tap do |result|
+        {}.tap do |result|
           data.each do |key, block|
             result[key] = context.instance_exec(input, output, &block)
           end
