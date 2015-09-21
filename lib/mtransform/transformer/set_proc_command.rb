@@ -5,7 +5,6 @@ module Mtransform
 
       def initialize(key, context, &block)
         raise ArgumentError, 'No block given' unless block_given?
-        raise ArgumentError, 'Key argument is not a Symbol' unless key.is_a? Symbol
         @data = { key => block }
         @context = context || self
       end

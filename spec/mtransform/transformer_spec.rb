@@ -78,10 +78,6 @@ module Mtransform
           subject.as_is(:a, :b)
           expect(subject.transform(input)).to eq ({a: input[:a], b: input[:b]})
         end
-
-        it 'raises on non symbol args' do
-          expect { subject.as_is(String, Object) }.to raise_error(ArgumentError, /not all arguments are symbol/i)
-        end
       end
 
       context '#rename' do
@@ -95,31 +91,6 @@ module Mtransform
         it 'raises on non-hash arg' do
           expect { subject.rename(1) }.to raise_error(ArgumentError, /not a hash/i)
         end
-
-        it 'raises on a hash arg that doesn\'t implement #keys' do
-          h = rename_hash.dup
-          h.instance_eval { undef :keys }
-
-          expect { subject.rename(h) }.to raise_error(ArgumentError, /implement #keys/)
-        end
-
-        it 'raises on a hash arg that doesn\'t implement #values' do
-          h = rename_hash.dup
-          h.instance_eval { undef :values }
-
-          expect { subject.rename(h) }.to raise_error(ArgumentError, /implement #values/)
-        end
-
-        it 'raises on a hash arg that doesn\'t implement #each' do
-          h = rename_hash.dup
-          h.instance_eval { undef :each }
-
-          expect { subject.rename(h) }.to raise_error(ArgumentError, /implement #each/)
-        end
-
-        it 'raises on hash arg that doesn\'t have all #keys and #values to be Symbol' do
-          expect { subject.rename(a: String) }.to raise_error(ArgumentError, /not all keys and values are symbol/i )
-        end
       end
 
       context '#set' do
@@ -129,24 +100,6 @@ module Mtransform
           it 'output values are copied from the hash arg' do
             subject.set(set_hash)
             expect(subject.transform(input)).to eq set_hash
-          end
-
-          it 'raises on a hash arg that doesn\'t implement #keys' do
-            h = set_hash.dup
-            h.instance_eval { undef :keys }
-
-            expect { subject.set(h) }.to raise_error(ArgumentError, /implement #keys/)
-          end
-
-          it 'raises on a hash arg that doesn\'t implement #each' do
-            h = set_hash.dup
-            h.instance_eval { undef :each }
-
-            expect { subject.set(h) }.to raise_error(ArgumentError, /implement #each/)
-          end
-
-          it 'raises on hash arg that doesn\'t have all of its #keys to be Symbol' do
-            expect { subject.set(String => 'xxx') }.to raise_error(ArgumentError, /not all keys are symbol/i)
           end
         end
 
