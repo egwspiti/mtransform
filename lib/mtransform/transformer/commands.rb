@@ -25,12 +25,7 @@ module Mtransform
         raise ArgumentError, 'Input arg does not implement #[]' unless input.respond_to?(:[])
 
         output = commands_without_block.inject({}) do |acc, command|
-          command_output =  case command.method(:run).arity
-                            when 0
-                              command.run
-                            when 1
-                              command.run(input)
-                            end
+          command_output = command.run(input)
           acc.merge(command_output)
         end
 
