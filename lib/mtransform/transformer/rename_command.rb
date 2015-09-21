@@ -4,7 +4,6 @@ module Mtransform
       attr_reader :hash
 
       def initialize(hash)
-        raise ArgumentError, 'Argument is not a Hash' unless hash.is_a? Hash
         @hash = hash
       end
 

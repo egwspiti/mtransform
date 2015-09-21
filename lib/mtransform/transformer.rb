@@ -19,6 +19,7 @@ module Mtransform
     end
 
     def rename(hash)
+      raise ArgumentError, 'Argument is not a Hash' unless hash.is_a? Hash
       commands.add_command_without_block(RenameCommand.new(hash))
     end
 
