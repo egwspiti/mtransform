@@ -4,7 +4,6 @@ module Mtransform
       attr_reader :data, :context
 
       def initialize(key, context, &block)
-        raise ArgumentError, 'No block given' unless block_given?
         @data = { key => block }
         @context = context || self
       end

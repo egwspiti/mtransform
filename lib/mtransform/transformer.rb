@@ -32,6 +32,7 @@ module Mtransform
       when Hash
         commands.add_command_without_block(SetHashCommand.new(arg))
       when Symbol
+        raise ArgumentError, 'No block given' unless block_given?
         commands.add_command_with_block(SetProcCommand.new(arg, context, &block))
       else
         raise ArgumentError, 'No Hash or Symbol argument given'
