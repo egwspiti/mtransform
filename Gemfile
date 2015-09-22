@@ -8,3 +8,5 @@ gem 'pry-doc'
 gem 'pry-docmore'
 gem 'pry-rescue'
 gem 'rspec'
+
+gem 'yard'
